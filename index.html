@@ -5293,100 +5293,106 @@ document.addEventListener("DOMContentLoaded", function() {
             if (e.target === termsModal) termsModal.style.display = 'none';
         });
         
-        // Form submissions
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            const user = users.find(u => u.email === email && u.password === password);
-            if (user) {
-                currentUser = user;
-                localStorage.setItem('ecolearn_currentUser', JSON.stringify(currentUser));
-                checkLoginStatus();
-                loginModal.style.display = 'none';
-                showToast(`Login successful! Welcome back, ${user.name}!`);
-                
-                // Show popup quiz after login
-                setTimeout(() => {
-                    popupQuiz.style.display = 'block';
-                }, 30000);
-            } else {
-                showToast('Invalid email or password. Please try again.', 'error');
-            }
-        });
-        
-        document.getElementById('registerForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('registerConfirmPassword').value;
-            
-            if (password !== confirmPassword) {
-                showToast('Passwords do not match!', 'error');
-                return;
-            }
-            
-            if (users.find(u => u.email === email)) {
-                showToast('An account with this email already exists!', 'error');
-                return;
-            }
-            
-            const newUser = {
-                id: Date.now(),
-                name: name,
-                email: email,
-                password: password,
-                progress: {
-                    lessons: {},
-                    courses: {},
-                    assessments: {},
-                    badges: [],
-                    quizProgress: [],
-                    videoProgress: {},
-                    checklist: {},
-                    ratings: {},
-                    journal: []
-                }
-            };
-            
-            users.push(newUser);
-            localStorage.setItem('ecolearn_users', JSON.stringify(users));
-            
-            currentUser = newUser;
-            localStorage.setItem('ecolearn_currentUser', JSON.stringify(currentUser));
-            checkLoginStatus();
-            registerModal.style.display = 'none';
-            showToast(`Registration successful! Welcome to EcoLearn, ${name}!`);
-            
-            // Show popup quiz after registration
-            setTimeout(() => {
-                popupQuiz.style.display = 'block';
-            }, 30000);
-        });
-        
-        // Feedback form submission
-        document.getElementById('feedbackForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            // Store feedback in localStorage (in a real app, this would be sent to a server)
-            let feedbacks = JSON.parse(localStorage.getItem('ecolearn_feedbacks')) || [];
-            const feedback = {
-                name: document.getElementById('feedbackName').value,
-                email: document.getElementById('feedbackEmail').value,
-                type: document.getElementById('feedbackType').value,
-                message: document.getElementById('feedbackMessage').value,
-                date: new Date().toISOString()
-            };
-            
-            feedbacks.push(feedback);
-            localStorage.setItem('ecolearn_feedbacks', JSON.stringify(feedbacks));
-            
-            showToast('Thank you for your feedback! We appreciate your input.');
-            feedbackModal.style.display = 'none';
-        });
-        
+// Load existing users or start with an empty array
+let users = JSON.parse(localStorage.getItem('ecolearn_users')) || [];
+let currentUser = JSON.parse(localStorage.getItem('ecolearn_currentUser')) || null;
+
+// LOGIN FORM
+document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    const user = users.find(u => u.email === email && u.password === password);
+    if (user) {
+        currentUser = user;
+        localStorage.setItem('ecolearn_currentUser', JSON.stringify(currentUser));
+        checkLoginStatus();
+        loginModal.style.display = 'none';
+        showToast(`Login successful! Welcome back, ${user.name}!`);
+
+        // Show popup quiz after login
+        setTimeout(() => {
+            popupQuiz.style.display = 'block';
+        }, 30000);
+    } else {
+        showToast('Invalid email or password. Please try again.', 'error');
+    }
+});
+
+// REGISTER FORM
+document.getElementById('registerForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('registerName').value;
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
+    const confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+    if (password !== confirmPassword) {
+        showToast('Passwords do not match!', 'error');
+        return;
+    }
+
+    if (users.find(u => u.email === email)) {
+        showToast('An account with this email already exists!', 'error');
+        return;
+    }
+
+    const newUser = {
+        id: Date.now(),
+        name: name,
+        email: email,
+        password: password,
+        progress: {
+            lessons: {},
+            courses: {},
+            assessments: {},
+            badges: [],
+            quizProgress: [],
+            videoProgress: {},
+            checklist: {},
+            ratings: {},
+            journal: []
+        }
+    };
+
+    users.push(newUser);
+    localStorage.setItem('ecolearn_users', JSON.stringify(users));
+
+    currentUser = newUser;
+    localStorage.setItem('ecolearn_currentUser', JSON.stringify(currentUser));
+    checkLoginStatus();
+    registerModal.style.display = 'none';
+    showToast(`Registration successful! Welcome to EcoLearn, ${name}!`);
+
+    // Show popup quiz after registration
+    setTimeout(() => {
+        popupQuiz.style.display = 'block';
+    }, 30000);
+});
+
+// FEEDBACK FORM
+document.getElementById('feedbackForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Store feedback in localStorage (in a real app, this would be sent to a server)
+    let feedbacks = JSON.parse(localStorage.getItem('ecolearn_feedbacks')) || [];
+    const feedback = {
+        name: document.getElementById('feedbackName').value,
+        email: document.getElementById('feedbackEmail').value,
+        type: document.getElementById('feedbackType').value,
+        message: document.getElementById('feedbackMessage').value,
+        date: new Date().toISOString()
+    };
+
+    feedbacks.push(feedback);
+    localStorage.setItem('ecolearn_feedbacks', JSON.stringify(feedbacks));
+
+    showToast('Thank you for your feedback! We appreciate your input.');
+    feedbackModal.style.display = 'none';
+});
+
         // Submit solution for real-world scenario
         document.getElementById('submitSolution').addEventListener('click', () => {
             const solution = document.getElementById('solution').value;
