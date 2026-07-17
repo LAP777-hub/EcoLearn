@@ -15,7 +15,7 @@ https://lap777-hub.github.io/EcoLearn/
 
 | **Detail** | **Information** |
 |------------|-----------------|
-| **Live Demo** | *Coming Soon* |
+| **Live Demo** | [(https://lap777-hub.github.io/EcoLearn/) |
 | **Repository** | https://github.com/LAP777-hub/EcoLearn |
 
 ---
